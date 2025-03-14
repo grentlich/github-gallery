@@ -4,70 +4,70 @@ const REPO_OWNER = "lumapps-marketplace";
 const REPO_NAME = "lumapps-extension-code-sample";
 const FOLDER_PATH = "micro-app/micro-app/Plug%20and%20play";
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-const REACT_APP_GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
-
-console.log('Token being used:', REACT_APP_GITHUB_TOKEN); // Pour déboguer
-
-const headers = {
-  Authorization: `token ${REACT_APP_GITHUB_TOKEN}`,
-  Accept: 'application/vnd.github.v3+json',
-};
 
 export default function GitHubGallery() {
   const [items, setItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Filtered items based on search
+  // Add the filtered items logic
   const filteredItems = items.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {
-    fetch(API_URL, { headers })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (!Array.isArray(data)) {
-          console.error('Received data:', data);
-          throw new Error('API did not return an array');
-        }
-        
-        const folders = data.filter((item) => item.type === "dir");
-        
-        const fetchDetails = folders.map((folder) => {
-          const encodedFolderName = encodeURIComponent(folder.name);
-          const folderUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}/${encodedFolderName}`;
-          return fetch(folderUrl, { headers })  // Add headers here too
-            .then((res) => {
-              if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-              }
-              return res.json();
-            })
-            .then((files) => {
-              const preview = files.find((file) => file.name.endsWith(".png"));
-              const readme = files.find((file) => file.name.toLowerCase() === "readme.md");
-              const jsonFile = files.find((file) => file.name.endsWith(".json"));
-              
-              return {
-                name: folder.name,
-                preview: preview ? preview.download_url : null,
-                readme: readme ? readme.html_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
-                jsonFile: jsonFile ? jsonFile.download_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
-              };
-            });
+    const fetchData = async () => {
+      const headers = {
+        Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+      };
+
+      fetch(API_URL, { headers })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          if (!Array.isArray(data)) {
+            console.error('Received data:', data);
+            throw new Error('API did not return an array');
+          }
+          
+          const folders = data.filter((item) => item.type === "dir");
+          
+          const fetchDetails = folders.map((folder) => {
+            const encodedFolderName = encodeURIComponent(folder.name);
+            const folderUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}/${encodedFolderName}`;
+            return fetch(folderUrl, { headers })  // Add headers here too
+              .then((res) => {
+                if (!res.ok) {
+                  throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                return res.json();
+              })
+              .then((files) => {
+                const preview = files.find((file) => file.name.endsWith(".png"));
+                const readme = files.find((file) => file.name.toLowerCase() === "readme.md");
+                const jsonFile = files.find((file) => file.name.endsWith(".json"));
+                
+                return {
+                  name: folder.name,
+                  preview: preview ? preview.download_url : null,
+                  readme: readme ? readme.html_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
+                  jsonFile: jsonFile ? jsonFile.download_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
+                };
+              });
+          });
+          
+          Promise.all(fetchDetails).then(setItems);
+        })
+        .catch((error) => {
+          console.error('Error fetching data:', error);
+          setItems([]); // Set empty array in case of error
         });
-        
-        Promise.all(fetchDetails).then(setItems);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setItems([]); // Set empty array in case of error
-      });
+    };
+    fetchData();
   }, []);
 
   return (
@@ -75,7 +75,7 @@ export default function GitHubGallery() {
       {/* Header with softer colors */}
       <header className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-12 px-6 mb-12 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-3">LumApps Micro-apps gallery</h1>
+          <h1 className="text-4xl font-bold text-center mb-3">LumApps Micro-apps Gallery</h1>
           <p className="text-center text-lg text-white/90 max-w-2xl mx-auto">
             Discover our collection of ready-to-use Micro-apps to enhance your LumApps Experience.
           </p>
