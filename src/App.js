@@ -74,13 +74,13 @@ export default function GitHubGallery() {
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold text-center mb-3">LumApps Extension Gallery</h1>
           <p className="text-center text-lg text-white/90 max-w-2xl mx-auto">
-          Discover our collection of ready-to-use extensions to enhance your LumApps experience.
+            Discover our collection of ready-to-use extensions to enhance your LumApps experience.
           </p>
           {/* Search input */}
           <div className="max-w-xl mx-auto mt-8">
             <input
               type="text"
-              placeholder="Rechercher une extension..."
+              placeholder="Search for an extension..."
               className="w-full px-4 py-2 rounded-lg border-2 border-white/20 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:border-white/40"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
