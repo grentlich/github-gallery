@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm install
+      - name: Debug
+        run: |
+          echo "===================="
+          echo "DEBUG INFORMATION"
+          echo "===================="
+          echo "Token exists: ${{ secrets.REACT_APP_GITHUB_TOKEN != '' }}"
+          echo "Token starts with ghp_: ${{ startsWith(secrets.REACT_APP_GITHUB_TOKEN, 'ghp_') }}"
+          echo "===================="
+      - name: Clean cache
+        run: |
+          rm -rf build
+          rm -rf node_modules/.cache
+      - name: Build
+        env:
+          REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
+          PUBLIC_URL: https://grentlich.github.io/github-gallery
+        run: |
+          echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
+          npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./build
