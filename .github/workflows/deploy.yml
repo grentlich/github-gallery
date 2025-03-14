@@ -25,8 +25,9 @@ jobs:
           REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
           PUBLIC_URL: https://grentlich.github.io/github-gallery
         run: |
-          echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
+          echo "REACT_APP_GITHUB_TOKEN=dummy-token-for-build" > .env
           npm run build
+          sed -i "s/dummy-token-for-build/${{ secrets.REACT_APP_GITHUB_TOKEN }}/g" build/static/js/main.*.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
