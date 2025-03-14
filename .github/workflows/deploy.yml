@@ -13,6 +13,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -28,7 +30,7 @@ jobs:
           echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
           echo "PUBLIC_URL=$PUBLIC_URL" >> .env
           npm run build
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: build
