@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "https://grentlich.github.io/github-gallery/static/css/main.54b27184.css",
-    "main.js": "https://grentlich.github.io/github-gallery/static/js/main.9862be1d.js",
+    "main.js": "https://grentlich.github.io/github-gallery/static/js/main.d8e27c17.js",
     "static/js/453.8ba802fe.chunk.js": "https://grentlich.github.io/github-gallery/static/js/453.8ba802fe.chunk.js",
     "index.html": "https://grentlich.github.io/github-gallery/index.html",
     "main.54b27184.css.map": "https://grentlich.github.io/github-gallery/static/css/main.54b27184.css.map",
-    "main.9862be1d.js.map": "https://grentlich.github.io/github-gallery/static/js/main.9862be1d.js.map",
+    "main.d8e27c17.js.map": "https://grentlich.github.io/github-gallery/static/js/main.d8e27c17.js.map",
     "453.8ba802fe.chunk.js.map": "https://grentlich.github.io/github-gallery/static/js/453.8ba802fe.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.54b27184.css",
-    "static/js/main.9862be1d.js"
+    "static/js/main.d8e27c17.js"
   ]
 }
