@@ -29,6 +29,11 @@ jobs:
         run: |
           echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
           npm run build
+
+      - name: List build directory
+        run: |
+          ls -la build/
+          
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
