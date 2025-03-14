@@ -44,7 +44,7 @@ jobs:
           - main
 
     env:
-      PROJECT_ID: your-project-id
+      PROJECT_ID: mercer-chatbots
       REGION: europe-west1
       SERVICE_NAME: github-gallery
 
