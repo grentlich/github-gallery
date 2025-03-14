@@ -74,7 +74,7 @@ export default function GitHubGallery() {
         <div className="container mx-auto">
           <h1 className="text-4xl font-bold text-center mb-3">LumApps Extension Gallery</h1>
           <p className="text-center text-lg text-white/90 max-w-2xl mx-auto">
-            Découvrez notre collection d'extensions prêtes à l'emploi pour enrichir votre expérience LumApps
+          Discover our collection of ready-to-use extensions to enhance your LumApps experience.
           </p>
           {/* Search input */}
           <div className="max-w-xl mx-auto mt-8">
