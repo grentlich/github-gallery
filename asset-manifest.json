@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/github-gallery/static/css/main.54b27184.css",
-    "main.js": "/github-gallery/static/js/main.41de0ba0.js",
-    "static/js/453.8ba802fe.chunk.js": "/github-gallery/static/js/453.8ba802fe.chunk.js",
-    "index.html": "/github-gallery/index.html",
-    "main.54b27184.css.map": "/github-gallery/static/css/main.54b27184.css.map",
-    "main.41de0ba0.js.map": "/github-gallery/static/js/main.41de0ba0.js.map",
-    "453.8ba802fe.chunk.js.map": "/github-gallery/static/js/453.8ba802fe.chunk.js.map"
+    "main.css": "https://grentlich.github.io/github-gallery/static/css/main.54b27184.css",
+    "main.js": "https://grentlich.github.io/github-gallery/static/js/main.9862be1d.js",
+    "static/js/453.8ba802fe.chunk.js": "https://grentlich.github.io/github-gallery/static/js/453.8ba802fe.chunk.js",
+    "index.html": "https://grentlich.github.io/github-gallery/index.html",
+    "main.54b27184.css.map": "https://grentlich.github.io/github-gallery/static/css/main.54b27184.css.map",
+    "main.9862be1d.js.map": "https://grentlich.github.io/github-gallery/static/js/main.9862be1d.js.map",
+    "453.8ba802fe.chunk.js.map": "https://grentlich.github.io/github-gallery/static/js/453.8ba802fe.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.54b27184.css",
-    "static/js/main.41de0ba0.js"
+    "static/js/main.9862be1d.js"
   ]
 }
