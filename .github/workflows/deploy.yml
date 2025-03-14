@@ -27,10 +27,13 @@ jobs:
         run: |
           echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
           npm run build
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v3
         with:
+          name: github-pages
           path: build
+          if-no-files-found: error
 
   deploy:
     needs: build
