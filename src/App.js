@@ -75,7 +75,7 @@ export default function GitHubGallery() {
       {/* Header with softer colors */}
       <header className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-12 px-6 mb-12 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-3">LumApps Micro-apps Gallery</h1>
+          <h1 className="text-4xl font-bold text-center mb-3">LumApps Micro-apps gallery</h1>
           <p className="text-center text-lg text-white/90 max-w-2xl mx-auto">
             Discover our collection of ready-to-use Micro-apps to enhance your LumApps Experience.
           </p>
