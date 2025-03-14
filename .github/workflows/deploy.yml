@@ -25,6 +25,8 @@ jobs:
           PUBLIC_URL: https://grentlich.github.io/github-gallery
           REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
         run: |
+          echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
+          echo "PUBLIC_URL=$PUBLIC_URL" >> .env
           npm run build
 
       - name: Setup Pages
