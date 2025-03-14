@@ -28,11 +28,7 @@ jobs:
           echo "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}" > .env
           npm run build
 
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: github-pages
-          path: .
+   
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
