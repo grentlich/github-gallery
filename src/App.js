@@ -4,9 +4,9 @@ const REPO_OWNER = "lumapps-marketplace";
 const REPO_NAME = "lumapps-extension-code-sample";
 const FOLDER_PATH = "micro-app/micro-app/Plug%20and%20play";
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
+const REACT_APP_GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 const headers = {
-  Authorization: `token ${GITHUB_TOKEN}`,
+  Authorization: `token ${REACT_APP_GITHUB_TOKEN}`,
   Accept: 'application/vnd.github.v3+json',
 };
 
