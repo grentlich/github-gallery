@@ -21,18 +21,7 @@ jobs:
           node-version: '18'
       - name: Install dependencies
         run: npm install
-      - name: Debug
-        run: |
-          echo "===================="
-          echo "DEBUG INFORMATION"
-          echo "===================="
-          echo "Token exists: ${{ secrets.REACT_APP_GITHUB_TOKEN != '' }}"
-          echo "Token starts with ghp_: ${{ startsWith(secrets.REACT_APP_GITHUB_TOKEN, 'ghp_') }}"
-          echo "===================="
-      - name: Clean cache
-        run: |
-          rm -rf build
-          rm -rf node_modules/.cache
+
       - name: Build
         env:
           REACT_APP_GITHUB_TOKEN: ${{ secrets.REACT_APP_GITHUB_TOKEN }}
@@ -43,5 +32,5 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          
           publish_dir: ./build
