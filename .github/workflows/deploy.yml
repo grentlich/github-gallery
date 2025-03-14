@@ -25,12 +25,6 @@ jobs:
         with:
           project_id: ${{ env.PROJECT_ID }}
 
-      - name: Create Artifact Registry Repository
-        run: |
-          gcloud artifacts repositories create ${{ env.SERVICE_NAME }} \
-            --repository-format=docker \
-            --location=${{ env.REGION }}
-
       - name: Configure Docker for Artifact Registry
         run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
