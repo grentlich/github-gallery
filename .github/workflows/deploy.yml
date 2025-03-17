@@ -31,6 +31,8 @@ jobs:
 
       - name: Build and Push Image
         run: |
+          # Définir PUBLIC_URL comme la racine
+          echo "PUBLIC_URL=/" > .env
           docker build -t europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/app:${{ github.sha }} .
           docker push europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/app:${{ github.sha }}
 

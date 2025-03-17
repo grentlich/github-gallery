@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+# S'assurer que PUBLIC_URL est défini à la racine
+ENV PUBLIC_URL=/
 RUN npm run build
 
 FROM nginx:alpine
