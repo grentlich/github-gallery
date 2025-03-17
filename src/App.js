@@ -150,14 +150,17 @@ export default function GitHubGallery() {
     </div>
   )}
 
-  const handleDownload = async (jsonUrl) => {
+  const handleDownload = async (jsonUrl, itemName) => {
     try {
       const response = await fetch(jsonUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
+      const { title } = extractTitleAndTags(itemName);
+      const fileName = `${title.toLowerCase().replace(/\s+/g, '-')}-config.json`;
+      
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'config.json';
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -168,7 +171,7 @@ export default function GitHubGallery() {
   };
 
   return (
-    <div className="gallery-container bg-gray-100">
+    <div className="gallery-container min-h-screen bg-[#faf9f7]">
       <header className="bg-gradient-to-r from-[#2493ff] to-[#245be7] text-white py-12 px-6 mb-12 shadow-lg">
         <h1 className="text-2xl font-bold text-center text-white mb-4">
           LumApps Micro-apps gallery
@@ -194,12 +197,12 @@ export default function GitHubGallery() {
         </div>
       </header>
 
-      <div className="px-4">
+      <div className="px-4 pb-12">
         <div className="columns-1 md:columns-2 lg:columns-4 gap-6 space-y-6">
           {filteredItems.map((item) => {
             const { title, tags } = extractTitleAndTags(item.name);
             return (
-              <div key={item.name} className="bg-[#faf9f7] rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 relative group break-inside-avoid">
+              <div key={item.name} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 relative group break-inside-avoid">
                 {item.preview ? (
                   <div className="relative overflow-hidden bg-white rounded-t-lg border-b border-gray-200">
                     <img
@@ -224,7 +227,7 @@ export default function GitHubGallery() {
                         )}
                         {item.jsonFile && (
                           <button
-                            onClick={() => handleDownload(item.jsonFile)}
+                            onClick={() => handleDownload(item.jsonFile, item.name)}
                             className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center"
                             title="Download Configuration"
                           >
