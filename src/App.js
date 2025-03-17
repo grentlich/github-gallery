@@ -80,7 +80,7 @@ export default function GitHubGallery() {
         <div className="max-w-xl mx-auto">
           <input
             type="text"
-            placeholder="Search for an extension..."
+            placeholder="Search for a micro-app..."
             className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 
             text-white placeholder-white/70 focus:outline-none focus:border-white/50 
             focus:ring-2 focus:ring-white/20 transition-all duration-300"
@@ -114,7 +114,7 @@ export default function GitHubGallery() {
                       onClick={() => window.open(item.readme, '_blank')}
                       className="flex-1 bg-[#2493ff] hover:bg-[#245be7] text-white px-6 py-2.5 rounded-lg transition-all duration-300 hover:shadow-md font-medium"
                     >
-                      README
+                      Read Me
                     </button>
                   )}
                   {item.jsonFile && (
@@ -122,7 +122,7 @@ export default function GitHubGallery() {
                       onClick={() => window.open(item.jsonFile, '_blank')}
                       className="flex-1 bg-[#91acf2] hover:bg-[#245be7] text-white px-6 py-2.5 rounded-lg transition-all duration-300 hover:shadow-md font-medium"
                     >
-                      JSON
+                      Download Json
                     </button>
                   )}
                 </div>
