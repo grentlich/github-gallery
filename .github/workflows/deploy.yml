@@ -31,9 +31,10 @@ jobs:
 
       - name: Build and Push Image
         run: |
-          # Définir PUBLIC_URL comme la racine
           echo "PUBLIC_URL=/" > .env
-          docker build -t europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/app:${{ github.sha }} .
+          docker build \
+            --build-arg REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }} \
+            -t europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/app:${{ github.sha }} .
           docker push europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/app:${{ github.sha }}
 
       - name: Deploy to Cloud Run
@@ -42,5 +43,4 @@ jobs:
             --image europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE_NAME }}/app:${{ github.sha }} \
             --region ${{ env.REGION }} \
             --platform managed \
-            --allow-unauthenticated \
-            --set-env-vars "REACT_APP_GITHUB_TOKEN=${{ secrets.REACT_APP_GITHUB_TOKEN }}"
+            --allow-unauthenticated
