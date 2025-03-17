@@ -4,6 +4,7 @@ const REPO_OWNER = "lumapps-marketplace";
 const REPO_NAME = "lumapps-extension-code-sample";
 const FOLDER_PATH = "micro-app/micro-app/Plug%20and%20play";
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
+import './iframe.css';
 
 export default function GitHubGallery() {
   const [items, setItems] = useState([]);
@@ -71,34 +72,23 @@ export default function GitHubGallery() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header with softer colors */}
-      <header className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-12 px-6 mb-12 shadow-md">
-        <div className="container mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-3">LumApps Micro-apps gallery</h1>
-          <p className="text-center text-lg text-white/90 max-w-2xl mx-auto">
-            Discover our collection of ready-to-use Micro-apps to enhance your LumApps Experience 
-          </p>
-          {/* Search input */}
-          <div className="max-w-xl mx-auto mt-8">
-            <input
-              type="text"
-              placeholder="Search for an extension..."
-              className="w-full px-4 py-2 rounded-lg border-2 border-white/20 bg-white/10 text-white placeholder-white/70 focus:outline-none focus:border-white/40"
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+    <div className="gallery-container">
+      <header className="gallery-header">
+        <h1 className="text-2xl font-bold text-center text-white mb-2">
+          LumApps Micro-apps gallery
+        </h1>
+        <input
+          type="text"
+          placeholder="Search for an extension..."
+          className="w-full px-3 py-1.5 rounded-lg bg-white/10 border-white/20 text-white"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </header>
 
-      {/* Gallery Grid */}
-      <div className="container mx-auto px-6 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item) => (
-            <div 
-              key={item.name} 
-              className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl"
-            >
+            <div key={item.name} className="gallery-card rounded-lg shadow-sm">
               {item.preview ? (
                 <div className="relative h-48 overflow-hidden group">
                   <img
