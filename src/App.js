@@ -72,33 +72,37 @@ export default function GitHubGallery() {
   }, []);
 
   return (
-    <div className="gallery-container">
-      <header className="gallery-header">
-        <h1 className="text-2xl font-bold text-center text-white mb-2">
+    <div className="gallery-container bg-gray-100">
+      <header className="bg-gradient-to-r from-[#2493ff] to-[#245be7] text-white py-12 px-6 mb-12 shadow-lg">
+        <h1 className="text-2xl font-bold text-center text-white mb-4">
           LumApps Micro-apps gallery
         </h1>
-        <input
-          type="text"
-          placeholder="Search for an extension..."
-          className="w-full px-3 py-1.5 rounded-lg bg-white/10 border-white/20 text-white"
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="max-w-xl mx-auto">
+          <input
+            type="text"
+            placeholder="Search for an extension..."
+            className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 
+            text-white placeholder-white/70 focus:outline-none focus:border-white/50 
+            focus:ring-2 focus:ring-white/20 transition-all duration-300"
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </header>
 
       <div className="px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredItems.map((item) => (
-            <div key={item.name} className="gallery-card rounded-lg shadow-sm">
+            <div key={item.name} className="bg-[#faf9f7] rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
               {item.preview ? (
-                <div className="relative h-48 overflow-hidden group">
+                <div className="relative h-48 overflow-hidden group bg-white rounded-t-lg border-b border-gray-200">
                   <img
                     src={item.preview}
                     alt={item.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain p-2"
                   />
                 </div>
               ) : (
-                <div className="h-48 bg-gray-100 flex items-center justify-center">
+                <div className="h-48 bg-white flex items-center justify-center rounded-t-lg border-b border-gray-200">
                   <span className="text-gray-400 text-lg">No preview available</span>
                 </div>
               )}
@@ -108,7 +112,7 @@ export default function GitHubGallery() {
                   {item.readme && (
                     <button
                       onClick={() => window.open(item.readme, '_blank')}
-                      className="flex-1 bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2.5 rounded-lg transition-all duration-300 hover:shadow-md font-medium"
+                      className="flex-1 bg-[#2493ff] hover:bg-[#245be7] text-white px-6 py-2.5 rounded-lg transition-all duration-300 hover:shadow-md font-medium"
                     >
                       README
                     </button>
@@ -116,7 +120,7 @@ export default function GitHubGallery() {
                   {item.jsonFile && (
                     <button
                       onClick={() => window.open(item.jsonFile, '_blank')}
-                      className="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-6 py-2.5 rounded-lg transition-all duration-300 hover:shadow-md font-medium"
+                      className="flex-1 bg-[#91acf2] hover:bg-[#245be7] text-white px-6 py-2.5 rounded-lg transition-all duration-300 hover:shadow-md font-medium"
                     >
                       JSON
                     </button>
