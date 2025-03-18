@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
-// Modifier l'import en haut du fichier
 import { InformationCircleIcon, ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import 'github-markdown-css/github-markdown.css';
+import './iframe.css';
 
 const REPO_OWNER = "lumapps-marketplace";
 const REPO_NAME = "lumapps-extension-code-sample";
 const FOLDER_PATH = "micro-app/micro-app/Plug%20and%20play";
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
-import './iframe.css';
 
-// Ajoutez ces styles personnalisés juste après les imports
 const markdownStyles = {
   ul: { listStyleType: 'disc', paddingLeft: '2em' },
   ol: { listStyleType: 'decimal', paddingLeft: '2em' }
@@ -28,13 +26,9 @@ export default function GitHubGallery() {
   };
 
   const extractTitleAndTags = (name) => {
-    // Trouve tous les textes entre crochets dans le nom
     const tagMatches = name.match(/\[(.*?)\]/g) || [];
-    // Extrait le titre en retirant tous les textes entre crochets
     const title = name.replace(/\[.*?\]/g, '').trim();
-    // Transforme les matches en tags en retirant les crochets
     const tags = tagMatches.map(tag => tag.slice(1, -1).trim());
-    
     return { title, tags };
   };
 
@@ -45,61 +39,10 @@ export default function GitHubGallery() {
            tags.some(tag => tag.toLowerCase().includes(searchLower));
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const headers = {
-        Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`,
-        Accept: 'application/vnd.github.v3+json',
-      };
-
-      fetch(API_URL, { headers })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
-        })
-        .then((data) => {
-          if (!Array.isArray(data)) {
-            console.error('Received data:', data);
-            throw new Error('API did not return an array');
-          }
-          
-          const folders = data.filter((item) => item.type === "dir");
-          
-          const fetchDetails = folders.map((folder) => {
-            const encodedFolderName = encodeURIComponent(folder.name);
-            const folderUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}/${encodedFolderName}`;
-            return fetch(folderUrl, { headers })  // Add headers here too
-              .then((res) => {
-                if (!res.ok) {
-                  throw new Error(`HTTP error! status: ${res.status}`);
-                }
-                return res.json();
-              })
-              .then((files) => {
-                const preview = files.find((file) => file.name.endsWith(".png"));
-                const readme = files.find((file) => file.name.toLowerCase() === "readme.md");
-                const jsonFile = files.find((file) => file.name.endsWith(".json"));
-                
-                return {
-                  name: folder.name,
-                  preview: preview ? preview.download_url : null,
-                  readme: readme ? readme.html_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
-                  jsonFile: jsonFile ? jsonFile.download_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
-                };
-              });
-          });
-          
-          Promise.all(fetchDetails).then(setItems);
-        })
-        .catch((error) => {
-          console.error('Error fetching data:', error);
-          setItems([]); // Set empty array in case of error
-        });
-    };
-    fetchData();
-  }, []);
+  const handleCloseModal = () => {
+    setSelectedReadme(null);
+    setReadmeContent('');
+  };
 
   const handleReadmeClick = async (readmeUrl, folderPath) => {
     try {
@@ -107,7 +50,6 @@ export default function GitHubGallery() {
       const response = await fetch(rawUrl);
       let content = await response.text();
       
-      // Remplacer les balises img avec les URLs des images du même dossier
       content = content.replace(
         /<img\s+src="([^"]+)"\s+[^>]*>/g,
         (match, imageName) => {
@@ -122,40 +64,6 @@ export default function GitHubGallery() {
       console.error('Error fetching readme:', error);
     }
   };
-
-  // Modifier l'appel dans le bouton
-  <button
-    onClick={() => handleReadmeClick(item.readme, item.preview?.substring(0, item.preview.lastIndexOf('/')))}
-    className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center"
-    title="View Documentation"
-  >
-    <InformationCircleIcon className="w-5 h-5 text-[#245be7]" />
-  </button>
-
-  // Modifier le style de la modale
-  {selectedReadme && (
-    <div className="fixed inset-0 bg-gray-900/75 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-xl">
-        <div className="p-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
-          <h2 className="text-xl font-bold text-gray-800">Documentation</h2>
-          <button
-            onClick={() => {
-              setSelectedReadme(null);
-              setReadmeContent('');
-            }}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <XMarkIcon className="w-6 h-6" />
-          </button>
-        </div>
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6 pb-12 markdown-body">
-            <ReactMarkdown>{readmeContent}</ReactMarkdown>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
 
   const handleDownload = async (jsonUrl, itemName) => {
     try {
@@ -177,6 +85,70 @@ export default function GitHubGallery() {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const headers = {
+        Authorization: `token ${process.env.REACT_APP_GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+      };
+
+      try {
+        const res = await fetch(API_URL, { headers });
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        
+        if (!Array.isArray(data)) {
+          console.error('Received data:', data);
+          throw new Error('API did not return an array');
+        }
+        
+        const folders = data.filter((item) => item.type === "dir");
+        const fetchDetails = folders.map((folder) => {
+          const encodedFolderName = encodeURIComponent(folder.name);
+          const folderUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}/${encodedFolderName}`;
+          return fetch(folderUrl, { headers })
+            .then((res) => {
+              if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+              return res.json();
+            })
+            .then((files) => {
+              const preview = files.find((file) => file.name.endsWith(".png"));
+              const readme = files.find((file) => file.name.toLowerCase() === "readme.md");
+              const jsonFile = files.find((file) => file.name.endsWith(".json"));
+              
+              return {
+                name: folder.name,
+                preview: preview ? preview.download_url : null,
+                readme: readme ? readme.html_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
+                jsonFile: jsonFile ? jsonFile.download_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
+              };
+            });
+        });
+        
+        const results = await Promise.all(fetchDetails);
+        setItems(results);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setItems([]);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const handleEscapeKey = (e) => {
+      if (e.key === 'Escape' && selectedReadme) {
+        handleCloseModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [selectedReadme]);
+
   return (
     <div className="gallery-container min-h-screen bg-[#faf9f7]">
       <header className="bg-gradient-to-r from-[#2493ff] to-[#245be7] text-white py-12 px-6 mb-12 shadow-lg">
@@ -189,8 +161,8 @@ export default function GitHubGallery() {
             value={searchTerm}
             placeholder="Search for a micro-app..."
             className="w-full px-4 py-2 rounded-lg bg-white/20 border border-white/30 
-            text-white placeholder-white/70 focus:outline-none focus:border-white/50 
-            focus:ring-2 focus:ring-white/20 transition-all duration-300"
+              text-white placeholder-white/70 focus:outline-none focus:border-white/50 
+              focus:ring-2 focus:ring-white/20 transition-all duration-300"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
@@ -225,7 +197,10 @@ export default function GitHubGallery() {
                       <div className="absolute bottom-4 right-4 flex gap-2">
                         {item.readme && (
                           <button
-                            onClick={() => handleReadmeClick(item.readme)}
+                            onClick={() => handleReadmeClick(
+                              item.readme,
+                              item.preview?.substring(0, item.preview.lastIndexOf('/'))
+                            )}
                             className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center w-10 h-10"
                             title="View Documentation"
                           >
@@ -273,15 +248,19 @@ export default function GitHubGallery() {
       </div>
 
       {selectedReadme && (
-        <div className="fixed inset-0 bg-gray-900/75 flex items-center justify-center p-4 z-50 overflow-hidden">
-          <div className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-xl">
+        <div 
+          className="fixed inset-0 bg-gray-900/75 flex items-center justify-center p-4 z-50 overflow-hidden"
+          onClick={handleCloseModal}
+          tabIndex={0}
+        >
+          <div 
+            className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-800">Documentation</h2>
               <button
-                onClick={() => {
-                  setSelectedReadme(null);
-                  setReadmeContent('');
-                }}
+                onClick={handleCloseModal}
                 className="text-gray-500 hover:text-gray-700"
               >
                 <XMarkIcon className="w-6 h-6" />
