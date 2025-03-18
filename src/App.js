@@ -249,12 +249,14 @@ export default function GitHubGallery() {
 
       {selectedReadme && (
         <div 
-          className="fixed inset-0 bg-gray-900/75 flex items-center justify-center p-4 z-50 overflow-hidden"
+          className="fixed inset-0 bg-gray-900/0 flex items-center justify-center p-4 z-50 overflow-hidden
+            animate-[fadeIn_0.3s_ease-out_forwards]"
           onClick={handleCloseModal}
           tabIndex={0}
         >
           <div 
-            className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-xl"
+            className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-xl
+              opacity-0 scale-95 animate-[zoomIn_0.4s_ease-out_0.1s_forwards]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
