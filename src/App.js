@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { InformationCircleIcon, ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/24/outline';
+// Modifier l'import en haut du fichier
+import { InformationCircleIcon, ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import 'github-markdown-css/github-markdown.css';
@@ -214,24 +215,24 @@ export default function GitHubGallery() {
                         e.target.style.height = `${e.target.offsetWidth * ratio}px`;
                       }}
                     />
-                    <div className="absolute inset-0 bg-gray-900/75 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <div className="absolute top-0 right-0 bottom-0 w-12 flex flex-col justify-center gap-3 p-2">
+                    <div className="absolute inset-0 bg-gray-900/75 opacity-0 group-hover:opacity-100 transition-all duration-300 p-4">
+                      <div className="absolute top-0 right-0 bottom-0 w-14 flex flex-col justify-center gap-3 p-2">
                         {item.readme && (
                           <button
                             onClick={() => handleReadmeClick(item.readme)}
-                            className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center"
+                            className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center w-10 h-10"
                             title="View Documentation"
                           >
-                            <InformationCircleIcon className="w-5 h-5 text-[#245be7]" />
+                            <InformationCircleIcon className="w-7 h-7 text-[#245be7]" />
                           </button>
                         )}
                         {item.jsonFile && (
                           <button
                             onClick={() => handleDownload(item.jsonFile, item.name)}
-                            className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center"
+                            className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center w-10 h-10"
                             title="Download Configuration"
                           >
-                            <ArrowDownTrayIcon className="w-5 h-5 text-[#245be7]" />
+                            <ArrowDownTrayIcon className="w-7 h-7 text-[#245be7]" />
                           </button>
                         )}
                       </div>
