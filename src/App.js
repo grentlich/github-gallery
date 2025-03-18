@@ -215,8 +215,8 @@ export default function GitHubGallery() {
                         e.target.style.height = `${e.target.offsetWidth * ratio}px`;
                       }}
                     />
-                    <div className="absolute inset-0 bg-gray-900/75 opacity-0 group-hover:opacity-100 transition-all duration-300 p-4">
-                      <div className="absolute top-0 right-0 bottom-0 w-14 flex flex-col justify-center gap-3 p-2">
+                    <div className="absolute inset-0 bg-gray-900/75 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <div className="absolute bottom-4 right-4 flex gap-2">
                         {item.readme && (
                           <button
                             onClick={() => handleReadmeClick(item.readme)}
