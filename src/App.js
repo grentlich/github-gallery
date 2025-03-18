@@ -11,6 +11,12 @@ const FOLDER_PATH = "micro-app/micro-app/Plug%20and%20play";
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}`;
 import './iframe.css';
 
+// Ajoutez ces styles personnalisés juste après les imports
+const markdownStyles = {
+  ul: { listStyleType: 'disc', paddingLeft: '2em' },
+  ol: { listStyleType: 'decimal', paddingLeft: '2em' }
+};
+
 export default function GitHubGallery() {
   const [items, setItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -283,7 +289,15 @@ export default function GitHubGallery() {
             </div>
             <div className="flex-1 overflow-y-auto min-h-0">
               <div className="p-6 pb-16 markdown-body">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{readmeContent}</ReactMarkdown>
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    ul: ({node, ...props}) => <ul style={markdownStyles.ul} {...props} />,
+                    ol: ({node, ...props}) => <ol style={markdownStyles.ol} {...props} />
+                  }}
+                >
+                  {readmeContent}
+                </ReactMarkdown>
               </div>
             </div>
           </div>
