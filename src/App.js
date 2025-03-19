@@ -20,9 +20,22 @@ export default function GitHubGallery() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedReadme, setSelectedReadme] = useState(null);
   const [readmeContent, setReadmeContent] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const handleTagClick = (tag) => {
-    setSearchTerm(searchTerm === tag ? '' : tag);
+    setSelectedTags(prev => 
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
+  const getAllTags = () => {
+    const allTags = items.flatMap(item => {
+      const { tags } = extractTitleAndTags(item.name);
+      return tags;
+    });
+    return [...new Set(allTags)].sort();
   };
 
   const extractTitleAndTags = (name) => {
@@ -35,8 +48,10 @@ export default function GitHubGallery() {
   const filteredItems = items.filter(item => {
     const { title, tags } = extractTitleAndTags(item.name);
     const searchLower = searchTerm.toLowerCase();
-    return title.toLowerCase().includes(searchLower) || 
-           tags.some(tag => tag.toLowerCase().includes(searchLower));
+    const matchesSearch = title.toLowerCase().includes(searchLower);
+    const matchesTags = selectedTags.length === 0 || 
+      selectedTags.every(selectedTag => tags.includes(selectedTag));
+    return matchesSearch && matchesTags;
   });
 
   const handleCloseModal = () => {
@@ -174,6 +189,31 @@ export default function GitHubGallery() {
             </button>
           )}
         </div>
+
+        <div className="max-w-4xl mx-auto mt-6">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {getAllTags().map((tag) => (
+              <button
+                key={tag}
+                onClick={() => handleTagClick(tag)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 
+                  ${selectedTags.includes(tag)
+                    ? 'bg-white text-[#245be7] shadow-md transform scale-105'
+                    : 'bg-white/20 text-white hover:bg-white/30'}`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          {selectedTags.length > 0 && (
+            <button
+              onClick={() => setSelectedTags([])}
+              className="mt-3 text-white/70 hover:text-white text-sm mx-auto block"
+            >
+              Clear all filters
+            </button>
+          )}
+        </div>
       </header>
 
       <div className="px-4 pb-12">
@@ -232,7 +272,7 @@ export default function GitHubGallery() {
                         key={index}
                         onClick={() => handleTagClick(tag)}
                         className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors duration-200 
-                          ${searchTerm === tag 
+                          ${selectedTags.includes(tag)
                             ? 'bg-[#245be7] text-white' 
                             : 'bg-[#91acf2]/20 hover:bg-[#91acf2]/30 text-[#245be7]'}`}
                       >
