@@ -296,7 +296,7 @@ export default function GitHubGallery() {
 
       {selectedReadme && (
         <div 
-          className="fixed inset-0 bg-gray-900/0 flex items-center justify-center p-4 z-50 overflow-hidden
+          className="fixed inset-0 bg-gray-900/0 flex items-start justify-center pt-16 p-4 z-50 overflow-hidden
             animate-[fadeIn_0.3s_ease-out_forwards]"
           onClick={handleCloseModal}
           tabIndex={0}
@@ -306,6 +306,7 @@ export default function GitHubGallery() {
               opacity-0 scale-95 animate-[zoomIn_0.4s_ease-out_0.1s_forwards]"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Reste du contenu de la modale */}
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-800">Documentation</h2>
               <div className="flex items-center gap-3">
