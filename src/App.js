@@ -302,7 +302,7 @@ export default function GitHubGallery() {
           tabIndex={0}
         >
           <div 
-            className="bg-white rounded-lg w-full max-w-4xl h-[90vh] flex flex-col shadow-xl
+            className="bg-white rounded-lg w-full max-w-4xl h-[90vh] max-h-[800px] flex flex-col shadow-xl
               opacity-0 scale-95 animate-[zoomIn_0.4s_ease-out_0.1s_forwards]"
             onClick={(e) => e.stopPropagation()}
           >
