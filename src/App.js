@@ -48,9 +48,15 @@ export default function GitHubGallery() {
   const filteredItems = items.filter(item => {
     const { title, tags } = extractTitleAndTags(item.name);
     const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = title.toLowerCase().includes(searchLower);
+    
+    // Recherche dans le titre ou dans les tags
+    const matchesSearch = title.toLowerCase().includes(searchLower) || 
+                         tags.some(tag => tag.toLowerCase().includes(searchLower));
+    
+    // Filtrage AND pour les tags sélectionnés
     const matchesTags = selectedTags.length === 0 || 
-      selectedTags.every(selectedTag => tags.includes(selectedTag));
+                       selectedTags.every(selectedTag => tags.includes(selectedTag));
+    
     return matchesSearch && matchesTags;
   });
 
@@ -59,9 +65,12 @@ export default function GitHubGallery() {
     setReadmeContent('');
   };
 
-  const handleReadmeClick = async (readmeUrl, folderPath) => {
+  const handleReadmeClick = async (item) => {
+    if (!item.readme) return;
+    
     try {
-      const rawUrl = readmeUrl.replace('github.com', 'raw.githubusercontent.com').replace('/blob', '');
+      const rawUrl = item.readme.replace('github.com', 'raw.githubusercontent.com').replace('/blob', '');
+      const folderPath = item.preview?.substring(0, item.preview.lastIndexOf('/'));
       const response = await fetch(rawUrl);
       let content = await response.text();
       
@@ -74,7 +83,7 @@ export default function GitHubGallery() {
       );
       
       setReadmeContent(content);
-      setSelectedReadme(readmeUrl);
+      setSelectedReadme(item);
     } catch (error) {
       console.error('Error fetching readme:', error);
     }
@@ -217,11 +226,15 @@ export default function GitHubGallery() {
       </header>
 
       <div className="px-4 pb-12">
-        <div className="columns-1 md:columns-2 lg:columns-4 gap-6 space-y-6">
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
           {filteredItems.map((item) => {
             const { title, tags } = extractTitleAndTags(item.name);
             return (
-              <div key={item.name} className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 relative group break-inside-avoid">
+              <div 
+                key={item.name} 
+                className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 relative group break-inside-avoid cursor-pointer"
+                onClick={() => handleReadmeClick(item)}
+              >
                 {item.preview ? (
                   <div className="relative overflow-hidden bg-white rounded-t-lg border-b border-gray-200">
                     <img
@@ -235,21 +248,12 @@ export default function GitHubGallery() {
                     />
                     <div className="absolute inset-0 bg-gray-900/75 opacity-0 group-hover:opacity-100 transition-all duration-300">
                       <div className="absolute bottom-4 right-4 flex gap-2">
-                        {item.readme && (
-                          <button
-                            onClick={() => handleReadmeClick(
-                              item.readme,
-                              item.preview?.substring(0, item.preview.lastIndexOf('/'))
-                            )}
-                            className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center w-10 h-10"
-                            title="View Documentation"
-                          >
-                            <InformationCircleIcon className="w-7 h-7 text-[#245be7]" />
-                          </button>
-                        )}
                         {item.jsonFile && (
                           <button
-                            onClick={() => handleDownload(item.jsonFile, item.name)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownload(item.jsonFile, item.name);
+                            }}
                             className="bg-white hover:bg-gray-100 p-2 rounded-lg transition-all duration-300 hover:shadow-md flex items-center justify-center w-10 h-10"
                             title="Download Configuration"
                           >
@@ -270,7 +274,10 @@ export default function GitHubGallery() {
                     {tags.map((tag, index) => (
                       <button 
                         key={index}
-                        onClick={() => handleTagClick(tag)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleTagClick(tag);
+                        }}
                         className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors duration-200 
                           ${selectedTags.includes(tag)
                             ? 'bg-[#245be7] text-white' 
@@ -301,12 +308,24 @@ export default function GitHubGallery() {
           >
             <div className="p-4 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-800">Documentation</h2>
-              <button
-                onClick={handleCloseModal}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <XMarkIcon className="w-6 h-6" />
-              </button>
+              <div className="flex items-center gap-3">
+                {selectedReadme.jsonFile && (
+                  <button
+                    onClick={() => handleDownload(selectedReadme.jsonFile, selectedReadme.name)}
+                    className="text-[#245be7] hover:text-[#1e4bc0] flex items-center gap-1"
+                    title="Download Configuration"
+                  >
+                    <ArrowDownTrayIcon className="w-5 h-5" />
+                    <span className="text-sm font-medium">Download</span>
+                  </button>
+                )}
+                <button
+                  onClick={handleCloseModal}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+              </div>
             </div>
             <div className="flex-1 overflow-y-auto min-h-0">
               <div className="p-6 pb-16 markdown-body">
