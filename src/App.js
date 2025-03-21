@@ -53,9 +53,9 @@ export default function GitHubGallery() {
     const matchesSearch = title.toLowerCase().includes(searchLower) || 
                          tags.some(tag => tag.toLowerCase().includes(searchLower));
     
-    // Filtrage AND pour les tags sélectionnés
+    // Modification: Filtrage OR pour les tags sélectionnés (au lieu de AND)
     const matchesTags = selectedTags.length === 0 || 
-                       selectedTags.every(selectedTag => tags.includes(selectedTag));
+                       selectedTags.some(selectedTag => tags.includes(selectedTag));
     
     return matchesSearch && matchesTags;
   });
