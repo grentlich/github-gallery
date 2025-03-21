@@ -177,7 +177,7 @@ export default function GitHubGallery() {
     <div className="gallery-container min-h-screen bg-[#faf9f7]">
       <header className="bg-gradient-to-r from-[#2493ff] to-[#245be7] text-white py-12 px-6 mb-12 shadow-lg">
         <h1 className="text-2xl font-bold text-center text-white mb-4">
-          LumApps Micro-apps gallery
+          LumApps Micro-app gallery
         </h1>
         <div className="max-w-xl mx-auto relative">
           <input
