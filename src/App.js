@@ -127,26 +127,63 @@ export default function GitHubGallery() {
         }
         
         const folders = data.filter((item) => item.type === "dir");
-        const fetchDetails = folders.map((folder) => {
+        const fetchDetails = folders.map(async (folder) => {
           const encodedFolderName = encodeURIComponent(folder.name);
-          const folderUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FOLDER_PATH}/${encodedFolderName}`;
-          return fetch(folderUrl, { headers })
-            .then((res) => {
-              if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-              return res.json();
-            })
-            .then((files) => {
-              const preview = files.find((file) => file.name.endsWith(".png"));
-              const readme = files.find((file) => file.name.toLowerCase() === "readme.md");
-              const jsonFile = files.find((file) => file.name.endsWith(".json"));
+          const folderPath = `${FOLDER_PATH}/${encodedFolderName}`;
+          const folderUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${folderPath}`;
+          
+          // Récupérer les fichiers dans le dossier
+          const filesRes = await fetch(folderUrl, { headers });
+          if (!filesRes.ok) throw new Error(`HTTP error! status: ${filesRes.status}`);
+          const files = await filesRes.json();
+          
+          const preview = files.find((file) => file.name.endsWith(".png"));
+          const readme = files.find((file) => file.name.toLowerCase() === "readme.md");
+          const jsonFile = files.find((file) => file.name.endsWith(".json"));
+          
+          // Récupérer l'historique des commits pour ce dossier spécifique
+          const commitsUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?path=${folderPath}`;
+          const commitsRes = await fetch(commitsUrl, { headers });
+          
+          let createdAt = null;
+          let lastUpdatedAt = null;
+          
+          if (commitsRes.ok) {
+            const commits = await commitsRes.json();
+            
+            if (commits.length > 0) {
+              // Le dernier commit (le plus récent) pour ce dossier
+              lastUpdatedAt = new Date(commits[0].commit.committer.date);
               
-              return {
-                name: folder.name,
-                preview: preview ? preview.download_url : null,
-                readme: readme ? readme.html_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
-                jsonFile: jsonFile ? jsonFile.download_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
-              };
-            });
+              // Le premier commit (le plus ancien) pour ce dossier
+              if (commits.length > 1) {
+                // Si l'API renvoie plusieurs commits, prenons le dernier de la liste
+                // Note: GitHub limite généralement les résultats, donc pour être précis
+                // il faudrait paginer pour obtenir tous les commits
+                const oldestCommitUrl = `${commitsUrl}&per_page=1&page=${commits.length}`;
+                const oldestCommitRes = await fetch(oldestCommitUrl, { headers });
+                
+                if (oldestCommitRes.ok) {
+                  const oldestCommits = await oldestCommitRes.json();
+                  if (oldestCommits.length > 0) {
+                    createdAt = new Date(oldestCommits[0].commit.committer.date);
+                  }
+                }
+              } else {
+                // S'il n'y a qu'un seul commit, c'est à la fois la date de création et de mise à jour
+                createdAt = lastUpdatedAt;
+              }
+            }
+          }
+          
+          return {
+            name: folder.name,
+            preview: preview ? preview.download_url : null,
+            readme: readme ? readme.html_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
+            jsonFile: jsonFile ? jsonFile.download_url.replace(/\[/g, '%5B').replace(/\]/g, '%5D') : null,
+            createdAt,
+            lastUpdatedAt
+          };
         });
         
         const results = await Promise.all(fetchDetails);
@@ -159,6 +196,35 @@ export default function GitHubGallery() {
 
     fetchData();
   }, []);
+
+// Ajouter cette fonction pour formater les dates
+const formatDate = (date) => {
+  if (!date) return 'Unknown';
+  
+  const now = new Date();
+  const diffTime = Math.abs(now - date);
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays < 1) {
+    return 'Today';
+  } else if (diffDays < 2) {
+    return 'Yesterday';
+  } else if (diffDays < 7) {
+    return `${diffDays} days ago`;
+  } else if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`;
+  } else if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`;
+  } else {
+    return date.toLocaleDateString('fr-FR', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  }
+};
 
   useEffect(() => {
     const handleEscapeKey = (e) => {
@@ -269,7 +335,22 @@ export default function GitHubGallery() {
                   </div>
                 )}
                 <div className="p-4 bg-gradient-to-r from-[#245be7]/5 to-[#2493ff]/5 border-t border-[#245be7]/10">
-                  <h2 className="text-lg font-bold mb-2 text-gray-800">{title}</h2>
+                  <div className="flex justify-between items-start">
+                    <h2 className="text-lg font-bold mb-2 text-gray-800">{title}</h2>
+                    
+                    {/* Affichage des dates sur la droite, l'un au-dessus de l'autre */}
+                    <div className="flex flex-col items-end text-xs text-gray-500">
+                      <div className="flex items-center mb-1">
+                        <span className="mr-1">Created:</span>
+                        <span className="font-medium">{formatDate(item.createdAt)}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="mr-1">Updated:</span>
+                        <span className="font-medium">{formatDate(item.lastUpdatedAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
                   <div className="flex flex-wrap gap-1">
                     {tags.map((tag, index) => (
                       <button 
